@@ -10,7 +10,7 @@ body {
     min-height: 100vh;
 }
 
-/* --- ESTILOS DEL INDEX (CUADRÍCULA) --- */
+/* --- ESTILOS DEL INDEX (CUADRÍCULA Y TARJETAS) --- */
 .titulo { 
     text-align: center; color: #f0b90b; margin-top: 40px; font-size: 2.5rem; 
 }
@@ -46,11 +46,13 @@ body {
 }
 
 /* --- ESTILOS DE LA GRÁFICA (ENCAPSULADOS) --- */
-/* Se activan solo si el body tiene la clase .pagina-grafica */
+/* Estas reglas solo se aplican si el body tiene la clase 'pagina-grafica' */
 
 body.pagina-grafica {
     display: flex; flex-direction: column; align-items: center;
 }
+
+body.pagina-grafica .titulo { font-size: 2.8rem; margin-top: 40px; color: #f0b90b; text-align: center; }
 
 body.pagina-grafica .controles-tiempo { 
     display: flex; justify-content: center; gap: 10px; margin: 20px 0; 

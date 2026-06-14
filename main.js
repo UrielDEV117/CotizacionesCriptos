@@ -60,13 +60,13 @@ function renderizarTarjetas(lista) {
 
     lista.forEach((ticker, index) => {
         const simbolo = ticker.symbol.replace('USDT', '');
-        const precio = parseFloat(ticker.lastPr || 0).toFixed(2);
         
-        // CORRECCIÓN: Buscamos chg24h, si no existe usamos chg, si tampoco, ponemos 0
-        const cambioRaw = ticker.chg24h || ticker.chg || 0;
-        const cambio = parseFloat(cambioRaw).toFixed(2);
+        // Bitget v2: 'lastPr' es el último precio, 'chg24h' es el cambio
+        const precio = parseFloat(ticker.lastPr || 0).toFixed(2);
+        const cambio = parseFloat(ticker.chg24h || 0).toFixed(2);
         
         const esPositivo = cambio >= 0;
+        const colorClase = esPositivo ? 'positivo' : 'negativo';
 
         const tarjeta = document.createElement('div');
         tarjeta.className = 'card';
@@ -74,7 +74,7 @@ function renderizarTarjetas(lista) {
             <span class="ranking">#${index + 1}</span>
             <h3>${simbolo} (USDT)</h3>
             <p class="precio">$${precio}</p>
-            <p class="${esPositivo ? 'positivo' : 'negativo'}">${esPositivo ? '+' : ''}${cambio}%</p>
+            <p class="${colorClase}">${esPositivo ? '+' : ''}${cambio}%</p>
             <button class="btn-grafica" onclick="window.location.href='grafica.html?id=${simbolo.toLowerCase()}'">
                 Ver Gráfica
             </button>
@@ -82,7 +82,6 @@ function renderizarTarjetas(lista) {
         contenedor.appendChild(tarjeta);
     });
 }
-
 // Asegúrate de seguir llamando a consultarAPI() cada cierto tiempo
 setInterval(consultarAPI, 5000);
 consultarAPI();
