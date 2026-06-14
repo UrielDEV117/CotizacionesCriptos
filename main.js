@@ -1,5 +1,4 @@
 console.log("Conectado")
-
 //api conexion 
 // URL oficial v2 de Bitget Spot
 const API_URL = 'https://api.bitget.com/api/v2/spot/market/tickers';
@@ -11,16 +10,16 @@ const TOP_CRIPTOS = [
     'LDO', 'ETC', 'XLM', 'HBAR', 'GRT', 'MKR', 'AAVE', 'INJ', 'RNDR', 'THETA',
     'FTM', 'ALGO', 'FLOW', 'ICP', 'VET', 'SAND', 'MANA', 'EGLD', 'AXS', 'BGB',
     // --- 50 NUEVAS MONEDAS AGREGADAS ---
-    'PEPE', 'WIF', 'FLOKI', 'BONK', 'SHIB',     // Memecoins con altísimo volumen
-    'STX', 'IMX', 'BEAM', 'GALA', 'APE',        // Gaming y capas de Bitcoin
-    'FET', 'AGIX', 'OCEAN', 'AKT', 'WLD',       // Inteligencia Artificial (IA)
-    'TIA', 'SUI', 'SEI', 'MINA', 'KAS',         // Nuevas Capas 1 (L1) de alta velocidad
-    'OP', 'METIS', 'MANTA', 'STRK', 'ZK',       // Capas 2 (L2) e infraestructura Rollup
-    'PENDLE', 'ENA', 'JUP', 'RAY', 'CRV',       // DeFi avanzado, agregadores y Yield
-    'ONDO', 'OM', 'RSR', 'TRU', 'AVAX',         // Real World Assets (RWA) / Tokenización
-    'IMX', 'FLOW', 'ENJ', 'CHZ', 'SUPER',       // NFTs, metaverso y Fan Tokens
-    'XMR', 'ZEC', 'DASH', 'LRC', 'ENS',         // Privacidad e infraestructura web3
-    'VTHO', 'ONE', 'ANKR', 'QTUM', 'BAT'        // Monedas históricas de utilidad
+    'PEPE', 'WIF', 'FLOKI', 'BONK', 'SHIB',      // Memecoins con altísimo volumen
+    'STX', 'IMX', 'BEAM', 'GALA', 'APE',         // Gaming y capas de Bitcoin
+    'FET', 'AGIX', 'OCEAN', 'AKT', 'WLD',        // Inteligencia Artificial (IA)
+    'TIA', 'SUI', 'SEI', 'MINA', 'KAS',          // Nuevas Capas 1 (L1) de alta velocidad
+    'OP', 'METIS', 'MANTA', 'STRK', 'ZK',        // Capas 2 (L2) e infraestructura Rollup
+    'PENDLE', 'ENA', 'JUP', 'RAY', 'CRV',        // DeFi avanzado, agregadores y Yield
+    'ONDO', 'OM', 'RSR', 'TRU', 'AVAX',          // Real World Assets (RWA) / Tokenización
+    'IMX', 'FLOW', 'ENJ', 'CHZ', 'SUPER',        // NFTs, metaverso y Fan Tokens
+    'XMR', 'ZEC', 'DASH', 'LRC', 'ENS',          // Privacidad e infraestructura web3
+    'VTHO', 'ONE', 'ANKR', 'QTUM', 'BAT'         // Monedas históricas de utilidad
 ];
 
 async function consultarAPI() {
@@ -143,4 +142,5 @@ function renderizarTarjetas(listaTickers) {
 
 document.addEventListener('DOMContentLoaded', () => {
     consultarAPI();
-    setInterval(consultarAPI, 30000); 
+    setInterval(consultarAPI, 30000);
+});
