@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Space+Grotesk:wght@300..700&display=swap');
 
 /* CONFIGURACIÓN DEL CUERPO (MODO OSCURO) */
@@ -212,4 +213,220 @@ body {
     font-size: 14px;
     margin-right: 10px;
     text-transform: uppercase;
+=======
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Space+Grotesk:wght@300..700&display=swap');
+
+/* CONFIGURACIÓN DEL CUERPO (MODO OSCURO) */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Space Grotesk", sans-serif;
+    background-color: #121214; 
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    min-height: 100vh;
+}
+
+/* ESTILO DEL TÍTULO Y SUBTÍTULO */
+.titulo {
+    text-align: center;
+    font-family: "Space Grotesk", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700; 
+    font-style: normal;
+    font-size: 2.8rem;
+    margin-top: 40px;
+    margin-bottom: 5px;
+    color: #f0b90b; 
+}
+
+.subtitulo {
+    text-align: center;
+    color: #848e9c;
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 40px;
+    font-weight: 400;
+}
+
+/* CONTENEDOR DE LAS TARJETAS (GRID) */
+.crypto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 20px;
+    width: 95%; 
+    max-width: 1200px;
+    padding: 20px;
+    box-sizing: border-box;
+    justify-content: center; 
+}
+
+/* DISEÑO DE LAS TARJETAS DE PRECIOS */
+.card {
+    background-color: #1a1a1e;
+    border: 1px solid #2b2b30;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: #f0b90b; 
+}
+
+/* SECCIÓN SUPERIOR DE LA TARJETA (RANKING Y LOGO) */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.crypto-logo {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+.ranking {
+    font-size: 0.85rem;
+    color: #848e9c;
+    background-color: #2b2b30;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.simbolo {
+    font-size: 1rem;
+    color: #848e9c;
+    font-weight: 400;
+}
+
+.precio {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 15px 0;
+}
+
+/* 6. COLORES DE SUBIDA Y BAJADA (PORCENTAJES) */
+.cambio {
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.positivo {
+    color: #0ecb81;
+    background-color: rgba(14, 203, 129, 0.1);
+}
+
+.negativo {
+    color: #f6465d;
+    background-color: rgba(246, 70, 93, 0.1);
+}
+
+.info-extra {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #2b2b30; 
+    text-align: left; 
+}
+
+.dato-bloque {
+    display: flex;
+    justify-content: space-between; 
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.dato-bloque:last-child {
+    margin-bottom: 0; 
+}
+
+.etiqueta {
+    color: #848e9c; 
+}
+
+.valor {
+    color: #eaecef;
+    font-weight: 500;
+}
+
+.mensaje {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #848e9c;
+}
+
+/*  MEDIAESTILOS EXCLUSIVOS PARA CELULARES */
+@media (max-width: 480px) {
+    .titulo {
+        font-size: 1.8rem; 
+        margin-top: 25px;
+        padding: 0 15px; 
+    }
+
+    .subtitulo {
+        font-size: 0.9rem;
+        margin-bottom: 25px;
+        padding: 0 15px;
+    }
+
+    .crypto-grid {
+        gap: 15px; 
+        padding: 10px;
+    }
+
+    .card {
+        padding: 18px; 
+    }
+
+    .precio {
+        font-size: 1.6rem; 
+    }
+
+    .dato-bloque {
+        font-size: 0.85rem; 
+    }
+}
+
+.card-link {
+    text-decoration: none; /* Quita el subrayado azul clásico de los enlaces */
+    color: inherit; /* Mantiene los colores de texto originales */
+    display: block;
+}
+
+.cambio.positivo { color: #00ff88; } /* Verde para las subidas */
+.cambio.negativo { color: #ff3b30; } /* Rojo para las bajadas */
+.cambio.neutro { color: #a0a0a5; }   /* Gris si se queda en 0.00% */
+
+.crypto-logo-placeholder {
+    width: 28px;
+    height: 28px;
+    background-color: #f3a807; /* Un tono dorado/naranja estilo crypto */
+    color: #16161a;            /* Texto oscuro para contraste */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 10px;
+    text-transform: uppercase;
+>>>>>>> e78ba6c6bdcf6045ab66c9f07f2c86209fa4d3a4
 }
