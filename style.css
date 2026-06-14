@@ -1,3 +1,4 @@
+/* --- TUS ESTILOS GLOBALES E INDEX --- */
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Space+Grotesk:wght@300..700&display=swap');
 
 body {
@@ -8,45 +9,33 @@ body {
     min-height: 100vh;
 }
 
-/* Títulos */
 .titulo { font-size: 2.8rem; margin-top: 40px; color: #f0b90b; text-align: center; }
 
-/* Contenedor Gráfica Responsive */
-.contenedor-grafica {
-    position: relative;
-    width: 95%; /* Adaptable */
-    max-width: 900px;
-    height: 400px; /* Altura base para escritorio */
-    margin: 20px auto;
+/* ... (Aquí irían todos tus estilos de .crypto-grid, .card, etc.) ... */
+
+/* --- ESTILOS EXCLUSIVOS PARA LA GRÁFICA (ENCAPSULADOS) --- */
+body.pagina-grafica .controles-tiempo { 
+    display: flex; justify-content: center; gap: 10px; margin: 20px 0; 
 }
 
-/* Estilos botones */
-.controles-tiempo { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
-.controles-tiempo button {
+body.pagina-grafica .controles-tiempo button {
     background-color: #1a1a1a !important; color: #ffc107 !important;
     border: 1px solid #ffc107 !important; padding: 8px 16px !important;
     border-radius: 5px !important; cursor: pointer !important;
     transition: 0.3s !important;
 }
-.controles-tiempo button:hover { background-color: #ffc107 !important; color: #000 !important; }
 
-/* Contador */
-#timer { text-align: center; color: #ffc107 !important; font-family: monospace !important; margin-bottom: 10px !important; }
+body.pagina-grafica .controles-tiempo button:hover { background-color: #ffc107 !important; color: #000 !important; }
 
-/* Botón Volver */
-.boton-volver { text-decoration: none; color: #848e9c; margin-top: 20px; display: block; }
-
-/* MEDIA QUERY PARA MÓVILES */
-@media (max-width: 600px) {
-    .titulo { font-size: 1.8rem; }
-    .contenedor-grafica { height: 250px; } /* Más pequeña en móviles */
-    .controles-tiempo { flex-wrap: wrap; gap: 5px; }
-    .controles-tiempo button { padding: 6px 10px !important; font-size: 0.8rem !important; }
+body.pagina-grafica .contenedor-grafica {
+    position: relative; width: 95%; max-width: 900px; height: 400px; margin: 20px auto;
 }
 
-/* Placeholder corregido */
-.crypto-logo-placeholder {
-    width: 28px; height: 28px; background-color: #f3a807; color: #16161a;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-weight: bold; font-size: 14px; margin-right: 10px; text-transform: uppercase;
+body.pagina-grafica #timer { text-align: center; color: #ffc107 !important; font-family: monospace !important; margin-bottom: 10px !important; }
+
+/* Responsive solo para gráfica */
+@media (max-width: 600px) {
+    body.pagina-grafica .titulo { font-size: 1.8rem; }
+    body.pagina-grafica .contenedor-grafica { height: 250px; }
+    body.pagina-grafica .controles-tiempo { flex-wrap: wrap; gap: 5px; }
 }
