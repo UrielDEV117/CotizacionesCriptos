@@ -7,12 +7,12 @@ let timeframeActual = '4h';
 let intervaloCuentaAtras;
 
 async function cargarGraficaHistorial() {
-    // 1. Limpiamos cualquier intervalo activo al cambiar de timeframe
+    // 1. Limpiar cualquier proceso anterior
     if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
     
-    // 2. Mapeo exacto según la validación de la API de Bitget v2
+    // 2. Mapeo exacto según los valores permitidos por la API (error 400171)
     const mapGranularity = { 
-        '15m': '15m', 
+        '15m': '15min', 
         '1h': '1h', 
         '4h': '4h', 
         '1d': '1day' 
@@ -20,7 +20,7 @@ async function cargarGraficaHistorial() {
     
     const granularityValue = mapGranularity[timeframeActual];
 
-    // 3. Petición a la API con los parámetros correctos
+    // 3. Petición a la API
     const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${granularityValue}&limit=30`;
     
     try {
@@ -37,7 +37,8 @@ async function cargarGraficaHistorial() {
             iniciarCuentaAtras(timeframeActual);
         } else {
             console.error("Error en respuesta de API:", json);
-            document.getElementById('grafica-titulo').innerText = "Error cargando datos";
+            const titulo = document.getElementById('grafica-titulo');
+            if (titulo) titulo.innerText = "Error cargando datos";
         }
     } catch (error) {
         console.error("Error al conectar:", error);
@@ -47,7 +48,8 @@ async function cargarGraficaHistorial() {
 // Función que activan los botones
 function cambiarTimeframe(nuevoTF) {
     timeframeActual = nuevoTF;
-    document.getElementById('timer').innerText = "Cargando nuevo intervalo...";
+    const timer = document.getElementById('timer');
+    if (timer) timer.innerText = "Cargando nuevo intervalo...";
     cargarGraficaHistorial(); 
 }
 
@@ -67,7 +69,10 @@ function iniciarCuentaAtras(granularity) {
 }
 
 function renderizarChart(etiquetas, precios) {
-    const ctx = document.getElementById('myChart').getContext('2d');
+    const canvas = document.getElementById('myChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
     if (miGrafica) miGrafica.destroy();
     
     miGrafica = new Chart(ctx, {
@@ -90,5 +95,5 @@ function renderizarChart(etiquetas, precios) {
     });
 }
 
-// Carga inicial al abrir la página
+// Carga inicial
 cargarGraficaHistorial();
