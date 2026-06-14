@@ -7,6 +7,9 @@ let timeframeActual = '4h';
 let intervaloCuentaAtras;
 
 async function cargarGraficaHistorial() {
+    // 1. Limpiar el temporizador antes de cargar nuevos datos
+    if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
+    
     const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${timeframeActual}&limit=30`;
     
     try {
@@ -19,6 +22,8 @@ async function cargarGraficaHistorial() {
             const precios = velas.map(v => parseFloat(v[4]));
 
             renderizarChart(etiquetas, precios);
+            
+            // 2. Iniciar el nuevo temporizador con el timeframe seleccionado
             iniciarCuentaAtras(timeframeActual);
         }
     } catch (error) {
@@ -26,19 +31,22 @@ async function cargarGraficaHistorial() {
     }
 }
 
+// Esta función es la que activan los botones
 function cambiarTimeframe(nuevoTF) {
     timeframeActual = nuevoTF;
-    cargarGraficaHistorial();
+    // Forzamos la actualización de la UI
+    document.getElementById('timer').innerText = "Cargando nuevo intervalo...";
+    cargarGraficaHistorial(); 
 }
 
 function iniciarCuentaAtras(granularity) {
-    if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
     const ms = { '15m': 900000, '1h': 3600000, '4h': 14400000, '1d': 86400000 }[granularity] || 14400000;
     
     intervaloCuentaAtras = setInterval(() => {
         const resto = ms - (Date.now() % ms);
         const m = Math.floor((resto / 60000) % 60);
         const s = Math.floor((resto / 1000) % 60);
+        
         const timer = document.getElementById('timer');
         if (timer) timer.innerText = `Próxima vela en: ${m}m ${s}s`;
     }, 1000);
@@ -47,9 +55,19 @@ function iniciarCuentaAtras(granularity) {
 function renderizarChart(etiquetas, precios) {
     const ctx = document.getElementById('myChart').getContext('2d');
     if (miGrafica) miGrafica.destroy();
+    
     miGrafica = new Chart(ctx, {
         type: 'line',
-        data: { labels: etiquetas, datasets: [{ data: precios, borderColor: '#ffc107', tension: 0.3, fill: true, backgroundColor: 'rgba(255, 193, 7, 0.1)' }] },
+        data: { 
+            labels: etiquetas, 
+            datasets: [{ 
+                data: precios, 
+                borderColor: '#ffc107', 
+                backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                fill: true, 
+                tension: 0.3 
+            }] 
+        },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 }
