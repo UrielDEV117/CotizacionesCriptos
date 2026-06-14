@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Precios</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <h1 id="grafica-titulo" class="titulo">Cargando Gráfica...</h1>
+    <p id="grafica-subtitulo" class="subtitulo">Historial de los últimos 7 días</p>
+
+    <a href="index.html" class="cambio positivo" style="text-decoration: none; margin-bottom: 30px; font-family: 'Space Grotesk', sans-serif;">
+        ← Volver al Panel General
+    </a>
+
+    <div class="contenedor-grafica" style="position: relative; height: 400px; width: 100%;">
+    <canvas id="myChart"></canvas>
+    </div>
+
+    <script src="grafica.js"></script>
+</body>
+</html>
