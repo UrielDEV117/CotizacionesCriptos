@@ -1,55 +1,62 @@
-// 1. Capturar parámetros de la URL
 const urlParams = new URLSearchParams(window.location.search);
 const cryptoId = urlParams.get('id');
-
-if (!cryptoId) {
-    window.location.href = 'index.html';
-}
-
 const parBitget = `${cryptoId.toUpperCase()}USDT`;
-// URL v2 correcta
-const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=4h&limit=30`;
 
 let miGrafica;
+let timeframeActual = '4h';
+let intervaloCuentaAtras;
 
+// Función principal de carga
 async function cargarGraficaHistorial() {
+    const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${timeframeActual}&limit=30`;
+    
     try {
-        document.getElementById('grafica-titulo').innerText = `Cargando datos de ${cryptoId.toUpperCase()}...`;
-
         const respuesta = await fetch(API_HISTORIAL);
-        if (!respuesta.ok) throw new Error("Error en red");
-
         const json = await respuesta.json();
 
-        // VALIDACIÓN: La API v2 devuelve los datos en json.data
-        if (json.code === "00000" && json.data && json.data.length > 0) {
-            
-            // Invertir para que la fecha más antigua sea la primera (izquierda a derecha)
+        if (json.code === "00000" && json.data) {
             const velas = [...json.data].reverse();
+            const etiquetas = velas.map(v => new Date(parseInt(v[0])).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+            const precios = velas.map(v => parseFloat(v[4]));
 
-            const etiquetasTiempo = velas.map(vela => {
-                const fecha = new Date(parseInt(vela[0]));
-                return fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            });
-
-            const preciosCierre = velas.map(vela => parseFloat(vela[4]));
-
-            document.getElementById('grafica-titulo').innerText = `Historial en Vivo de ${cryptoId.toUpperCase()}`;
-            renderizarChart(etiquetasTiempo, preciosCierre);
-
-        } else {
-            throw new Error("No hay datos disponibles para este par.");
+            renderizarChart(etiquetas, precios);
+            iniciarCuentaAtras(timeframeActual); // Inicia el reloj al cargar datos
         }
     } catch (error) {
-        console.error(error);
-        document.getElementById('grafica-titulo').innerText = `Error: No se pudo cargar el historial`;
+        console.error("Error:", error);
     }
 }
 
-function renderizarChart(etiquetas, precios) {
-    const canvas = document.getElementById('myChart');
-    const ctx = canvas.getContext('2d');
+// Lógica de cambio de timeframe
+function cambiarTimeframe(nuevoTF) {
+    timeframeActual = nuevoTF;
+    cargarGraficaHistorial();
+}
 
+// Lógica de cuenta atrás
+function iniciarCuentaAtras(granularity) {
+    if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
+
+    const ms = convertirTFAMilisegundos(granularity);
+    
+    intervaloCuentaAtras = setInterval(() => {
+        const ahora = Date.now();
+        const resto = ms - (ahora % ms);
+        
+        const min = Math.floor((resto / 1000 / 60) % 60);
+        const seg = Math.floor((resto / 1000) % 60);
+
+        document.getElementById('timer').innerText = `Próxima vela en: ${min}m ${seg}s`;
+    }, 1000);
+}
+
+function convertirTFAMilisegundos(tf) {
+    const map = { '15m': 15*60*1000, '1h': 60*60*1000, '4h': 4*60*60*1000, '1d': 24*60*60*1000 };
+    return map[tf] || 4*60*60*1000;
+}
+
+function renderizarChart(etiquetas, precios) {
+    const ctx = document.getElementById('myChart').getContext('2d');
     if (miGrafica) miGrafica.destroy();
 
     miGrafica = new Chart(ctx, {
@@ -60,16 +67,12 @@ function renderizarChart(etiquetas, precios) {
                 label: 'Precio',
                 data: precios,
                 borderColor: '#ffc107',
-                backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                backgroundColor: 'rgba(255, 193, 7, 0.1)',
                 fill: true,
                 tension: 0.3
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
     });
 }
 
