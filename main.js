@@ -1,8 +1,8 @@
-console.log("Conectado")
+console.log("Conectado");
 // URL oficial v2 de Bitget Spot
 const API_URL = 'https://api.bitget.com/api/v2/spot/market/tickers';
 
-// Lista de monedas a monitorear
+// Lista de monedas a monitorear (MANTENIDA)
 const TOP_CRIPTOS = [
     'BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX', 'TRX', 'DOT',
     'LINK', 'MATIC', 'LTC', 'UNI', 'NEAR', 'APT', 'ARB', 'OP', 'ATOM', 'FIL',
@@ -22,30 +22,21 @@ const TOP_CRIPTOS = [
 
 async function consultarAPI() {
     try {
-        console.log("Actualizando precios en tiempo real desde Bitget Exchange...");
         const respuesta = await fetch(API_URL);
-        
-        if (!respuesta.ok) {
-            throw new Error(`Error de conexión con Bitget: Código ${respuesta.status}`);
-        }
+        if (!respuesta.ok) throw new Error(`Error: ${respuesta.status}`);
 
         const datos = await respuesta.json();
         
-        // La API v2 suele envolver los datos en un objeto 'data'
         if (datos.code === "00000" && datos.data) {
-            
-            const datosFiltrados = datos.data.filter(ticker => {
-                const par = ticker.symbol;
-                if (!par.endsWith('USDT')) return false;
-                const monedaBase = par.replace('USDT', '');
-                return TOP_CRIPTOS.includes(monedaBase);
-            });
-
-            datosFiltrados.sort((a, b) => {
-                const tokenA = a.symbol.replace('USDT', '');
-                const tokenB = b.symbol.replace('USDT', '');
-                return TOP_CRIPTOS.indexOf(tokenA) - TOP_CRIPTOS.indexOf(tokenB);
-            });
+            // Filtrado manteniendo el orden de TOP_CRIPTOS
+            const datosFiltrados = datos.data
+                .filter(ticker => ticker.symbol.endsWith('USDT'))
+                .map(ticker => ({
+                    ...ticker,
+                    base: ticker.symbol.replace('USDT', '')
+                }))
+                .filter(ticker => TOP_CRIPTOS.includes(ticker.base))
+                .sort((a, b) => TOP_CRIPTOS.indexOf(a.base) - TOP_CRIPTOS.indexOf(b.base));
 
             renderizarTarjetas(datosFiltrados);
         }
@@ -53,35 +44,38 @@ async function consultarAPI() {
         console.error("Hubo un fallo al sincronizar con Bitget:", error);
     }
 }
+
 function renderizarTarjetas(lista) {
     const contenedor = document.getElementById('crypto-container');
     if (!contenedor) return;
     contenedor.innerHTML = '';
 
     lista.forEach((ticker, index) => {
-        const simbolo = ticker.symbol.replace('USDT', '');
+        const precioNum = parseFloat(ticker.lastPr || 0);
+        const cambioNum = parseFloat(ticker.chg24h || 0);
         
-        // Bitget v2: 'lastPr' es el último precio, 'chg24h' es el cambio
-        const precio = parseFloat(ticker.lastPr || 0).toFixed(2);
-        const cambio = parseFloat(ticker.chg24h || 0).toFixed(2);
+        // Lógica de precisión: Si el precio es < 1, muestra 6 decimales, si no, 2.
+        const precioFormateado = precioNum < 1 ? precioNum.toFixed(6) : precioNum.toFixed(2);
+        const cambioFormateado = cambioNum.toFixed(2);
         
-        const esPositivo = cambio >= 0;
+        const esPositivo = cambioNum >= 0;
         const colorClase = esPositivo ? 'positivo' : 'negativo';
 
         const tarjeta = document.createElement('div');
         tarjeta.className = 'card';
         tarjeta.innerHTML = `
             <span class="ranking">#${index + 1}</span>
-            <h3>${simbolo} (USDT)</h3>
-            <p class="precio">$${precio}</p>
-            <p class="${colorClase}">${esPositivo ? '+' : ''}${cambio}%</p>
-            <button class="btn-grafica" onclick="window.location.href='grafica.html?id=${simbolo.toLowerCase()}'">
+            <h3>${ticker.base} (USDT)</h3>
+            <p class="precio">$${precioFormateado}</p>
+            <p class="${colorClase}">${esPositivo ? '+' : ''}${cambioFormateado}%</p>
+            <button class="btn-grafica" onclick="window.location.href='grafica.html?id=${ticker.base.toLowerCase()}'">
                 Ver Gráfica
             </button>
         `;
         contenedor.appendChild(tarjeta);
     });
 }
-// Asegúrate de seguir llamando a consultarAPI() cada cierto tiempo
-setInterval(consultarAPI, 5000);
+
+// Inicialización
 consultarAPI();
+setInterval(consultarAPI, 10000); // Actualiza cada 10 segundos
