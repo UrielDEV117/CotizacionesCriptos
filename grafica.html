@@ -7,8 +7,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="pagina-grafica">
-    
-    <h1 id="grafica-titulo" class="titulo">Cargando Gráfica...</h1>
+
+    <header class="header-grafica">
+        <a href="index.html" class="boton-volver">← Volver</a>
+        <h1 id="grafica-titulo" class="titulo">Cargando Gráfica...</h1>
+    </header>
     
     <div class="controles-tiempo">
         <button onclick="cambiarTimeframe('15m')">15m</button>
@@ -22,8 +25,6 @@
     <div class="contenedor-grafica">
         <canvas id="myChart"></canvas>
     </div>
-
-    <a href="index.html" class="boton-volver">← Volver al Panel</a>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="grafica.js"></script>

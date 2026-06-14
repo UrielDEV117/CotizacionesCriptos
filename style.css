@@ -10,11 +10,21 @@ body {
     min-height: 100vh;
 }
 
-/* --- ESTILOS DEL INDEX (CUADRÍCULA Y TARJETAS) --- */
-.titulo { 
-    text-align: center; color: #f0b90b; margin-top: 40px; font-size: 2.5rem; 
+/* --- CENTRADO SUPERIOR (Nuevo) --- */
+.contenedor-info {
+    text-align: center;
+    margin: 40px auto 20px auto;
 }
 
+.titulo { 
+    color: #f0b90b; font-size: 2.5rem; margin-bottom: 10px;
+}
+
+.subtitulo {
+    color: #888; font-size: 1.1rem;
+}
+
+/* --- GRID --- */
 .crypto-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
@@ -35,7 +45,6 @@ body {
 }
 
 .precio { font-size: 1.6rem; font-weight: bold; margin: 10px 0; }
-
 .positivo { color: #0ecb81; font-weight: bold; }
 .negativo { color: #f6465d; font-weight: bold; }
 
@@ -45,15 +54,27 @@ body {
     width: 100%; margin-top: 15px; color: #000;
 }
 
-/* --- ESTILOS DE LA GRÁFICA (ENCAPSULADOS) --- */
-/* Estas reglas solo se aplican si el body tiene la clase 'pagina-grafica' */
-
+/* --- ESTILOS DE LA GRÁFICA (Cabecera con botón de regreso) --- */
 body.pagina-grafica {
     display: flex; flex-direction: column; align-items: center;
 }
 
-body.pagina-grafica .titulo { font-size: 2.8rem; margin-top: 40px; color: #f0b90b; text-align: center; }
+.header-grafica {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; position: relative;
+    background-color: #121214;
+}
 
+.boton-volver {
+    position: absolute; left: 20px;
+    padding: 10px 20px;
+    background-color: #f0b90b; color: #000;
+    text-decoration: none; border-radius: 5px;
+    font-weight: bold; cursor: pointer;
+}
+
+/* Resto de estilos de gráfica... */
 body.pagina-grafica .controles-tiempo { 
     display: flex; justify-content: center; gap: 10px; margin: 20px 0; 
 }
@@ -68,18 +89,7 @@ body.pagina-grafica .contenedor-grafica {
     position: relative; width: 95%; max-width: 900px; height: 400px; margin: 20px auto;
 }
 
-body.pagina-grafica #timer { 
-    text-align: center; color: #ffc107 !important; font-family: monospace !important; 
-}
-
-body.pagina-grafica .boton-volver {
-    display: inline-block; padding: 12px 24px;
-    background-color: #f0b90b; color: #000;
-    text-decoration: none; border-radius: 8px;
-    font-weight: bold; margin-top: 30px;
-}
-
-/* Responsive para la gráfica */
 @media (max-width: 600px) {
     body.pagina-grafica .contenedor-grafica { height: 250px; }
+    .boton-volver { padding: 8px 12px; font-size: 0.9rem; }
 }
