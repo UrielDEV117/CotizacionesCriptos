@@ -57,40 +57,40 @@ async function consultarAPI() {
 function renderizarTarjetas(listaTickers) {
     const contenedor = document.getElementById('crypto-container');
     if (!contenedor) return;
+    
+    // Limpiamos antes de inyectar
     contenedor.innerHTML = ''; 
 
-    listaTickers.forEach((ticker, indice) => {
-        const parSymbol = ticker.symbol; 
-        const simbolo = parSymbol.replace('USDT', '');
-        const precioUSD = parseFloat(ticker.lastPr);
-        const precioApertura = parseFloat(ticker.open);
-        
-        let formatoPrecio = { minimumFractionDigits: 2, maximumFractionDigits: 4 };
-        if (precioUSD < 0.1) formatoPrecio = { minimumFractionDigits: 4, maximumFractionDigits: 8 };
+    listaTickers.forEach((ticker, index) => {
+        const simbolo = ticker.symbol.replace('USDT', '');
+        const precio = parseFloat(ticker.lastPr).toFixed(2);
+        const cambio = parseFloat(ticker.chg24h).toFixed(2);
+        const esPositivo = cambio >= 0;
+        const claseCambio = esPositivo ? 'positivo' : 'negativo';
+        const signo = esPositivo ? '+' : '';
 
-        let cambio24h = (precioApertura > 0) ? ((precioUSD - precioApertura) / precioApertura) * 100 : 0;
-        const cambioRedondeado = parseFloat(cambio24h.toFixed(2));
+        // Creamos el elemento de la tarjeta
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'card'; // Esta clase debe estar en tu CSS
         
-        let claseCambio = cambioRedondeado > 0 ? 'positivo' : (cambioRedondeado < 0 ? 'negativo' : 'neutro');
-        let signo = cambioRedondeado > 0 ? '+' : '';
-
-        const tarjetaHTML = `
-            <a href="grafica.html?id=${simbolo.toLowerCase()}" class="card-link">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="ranking">#${indice + 1}</span>
-                        <h2>${simbolo} <span class="simbolo">(USDT)</span></h2>
-                    </div>
-                    <p class="precio">$${precioUSD.toLocaleString('en-US', formatoPrecio)}</p>
-                    <span class="cambio ${claseCambio}">${signo}${cambioRedondeado.toFixed(2)}%</span>
-                </div>
-            </a>
+        // Inyectamos el HTML con las clases de diseño
+        tarjeta.innerHTML = `
+            <div class="card-header">
+                <span class="ranking">#${index + 1}</span>
+                <h3>${simbolo} (USDT)</h3>
+            </div>
+            <p class="precio">$${precio}</p>
+            <p class="cambio ${claseCambio}">${signo}${cambio}%</p>
+            <button class="btn-grafica" onclick="window.location.href='grafica.html?id=${simbolo.toLowerCase()}'">
+                Ver Gráfica
+            </button>
         `;
-        contenedor.innerHTML += tarjetaHTML;
+        
+        contenedor.appendChild(tarjeta);
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    consultarAPI();
-    setInterval(consultarAPI, 30000);
+// Asegúrate de seguir llamando a consultarAPI() cada cierto tiempo
+setInterval(consultarAPI, 5000);
+consultarAPI();
 });
