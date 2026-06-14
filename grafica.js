@@ -6,22 +6,28 @@ let miGrafica;
 let timeframeActual = '4h';
 let intervaloCuentaAtras;
 
-// Cambia tu función cargarGraficaHistorial para usar el formato que espera Bitget v2
 async function cargarGraficaHistorial() {
+    // 1. Limpiamos cualquier intervalo activo al cambiar de timeframe
     if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
     
-    // IMPORTANTE: Asegúrate de que el formato de granularity sea el correcto.
-    // Si Bitget v2 usa segundos, '15m' podría ser '900', '1h' '3600', '1d' '86400'.
-    // Probemos mapear a los códigos que Bitget v2 acepta para velas:
-    const mapGranularity = { '15m': '900', '1h': '3600', '4h': '14400', '1d': '86400' };
+    // 2. Mapeo exacto según la validación de la API de Bitget v2
+    const mapGranularity = { 
+        '15m': '15m', 
+        '1h': '1h', 
+        '4h': '4h', 
+        '1d': '1day' 
+    };
+    
     const granularityValue = mapGranularity[timeframeActual];
 
+    // 3. Petición a la API con los parámetros correctos
     const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${granularityValue}&limit=30`;
     
     try {
         const respuesta = await fetch(API_HISTORIAL);
         const json = await respuesta.json();
 
+        // 4. Verificación de éxito de la API
         if (json.code === "00000" && json.data) {
             const velas = [...json.data].reverse();
             const etiquetas = velas.map(v => new Date(parseInt(v[0])).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
@@ -31,22 +37,24 @@ async function cargarGraficaHistorial() {
             iniciarCuentaAtras(timeframeActual);
         } else {
             console.error("Error en respuesta de API:", json);
+            document.getElementById('grafica-titulo').innerText = "Error cargando datos";
         }
     } catch (error) {
-        console.error("Error al cargar:", error);
+        console.error("Error al conectar:", error);
     }
 }
 
-// Esta función es la que activan los botones
+// Función que activan los botones
 function cambiarTimeframe(nuevoTF) {
     timeframeActual = nuevoTF;
-    // Forzamos la actualización de la UI
     document.getElementById('timer').innerText = "Cargando nuevo intervalo...";
     cargarGraficaHistorial(); 
 }
 
+// Lógica de cuenta atrás
 function iniciarCuentaAtras(granularity) {
-    const ms = { '15m': 900000, '1h': 3600000, '4h': 14400000, '1d': 86400000 }[granularity] || 14400000;
+    const mapMs = { '15m': 900000, '1h': 3600000, '4h': 14400000, '1d': 86400000 };
+    const ms = mapMs[granularity] || 14400000;
     
     intervaloCuentaAtras = setInterval(() => {
         const resto = ms - (Date.now() % ms);
@@ -74,8 +82,13 @@ function renderizarChart(etiquetas, precios) {
                 tension: 0.3 
             }] 
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { legend: { display: false } } 
+        }
     });
 }
 
+// Carga inicial al abrir la página
 cargarGraficaHistorial();
