@@ -7,110 +7,70 @@ if (!cryptoId) {
 }
 
 const parBitget = `${cryptoId.toUpperCase()}USDT`;
-
-// URL oficial v2 con granularidad de 4 horas ('4h') y límite de 30 velas
+// URL v2 correcta
 const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=4h&limit=30`;
 
 let miGrafica;
 
 async function cargarGraficaHistorial() {
     try {
-        console.log(`Pidiendo datos de trading para ${parBitget} a Bitget v2...`);
-        document.getElementById('grafica-titulo').innerText = `Historial en Vivo de ${cryptoId.toUpperCase()}`;
+        document.getElementById('grafica-titulo').innerText = `Cargando datos de ${cryptoId.toUpperCase()}...`;
 
         const respuesta = await fetch(API_HISTORIAL);
-        
-        if (!respuesta.ok) {
-            throw new Error(`Servidor inaccesible. Código de estado: ${respuesta.status}`);
-        }
+        if (!respuesta.ok) throw new Error("Error en red");
 
-        const datos = await respuesta.json();
+        const json = await respuesta.json();
 
-        // Validamos la respuesta nativa de Bitget v2
-        if (datos.msg === "success" && datos.data && datos.data.length > 0) {
+        // VALIDACIÓN: La API v2 devuelve los datos en json.data
+        if (json.code === "00000" && json.data && json.data.length > 0) {
             
-            // Clonamos e invertimos las velas para que el tiempo corra de izquierda a derecha
-            const velas = [...datos.data].reverse();
+            // Invertir para que la fecha más antigua sea la primera (izquierda a derecha)
+            const velas = [...json.data].reverse();
 
-            // Procesamos etiquetas (X) y precios de cierre (Y)
             const etiquetasTiempo = velas.map(vela => {
                 const fecha = new Date(parseInt(vela[0]));
-                return fecha.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                return fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
             });
 
             const preciosCierre = velas.map(vela => parseFloat(vela[4]));
 
-            console.log("Datos procesados con éxito. Dibujando gráfico...");
+            document.getElementById('grafica-titulo').innerText = `Historial en Vivo de ${cryptoId.toUpperCase()}`;
             renderizarChart(etiquetasTiempo, preciosCierre);
 
         } else {
-            throw new Error("Bitget devolvió un formato vacío o inesperado.");
+            throw new Error("No hay datos disponibles para este par.");
         }
-
     } catch (error) {
-        console.error("Fallo crítico en grafica.js:", error);
-        document.getElementById('grafica-titulo').innerText = `Error al conectar con el historial de ${cryptoId.toUpperCase()}`;
+        console.error(error);
+        document.getElementById('grafica-titulo').innerText = `Error: No se pudo cargar el historial`;
     }
 }
 
 function renderizarChart(etiquetas, precios) {
     const canvas = document.getElementById('myChart');
-    if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
 
-    if (miGrafica) {
-        miGrafica.destroy();
-    }
-
-    // Degradado moderno debajo de la línea dorada
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 400);
-    gradient.addColorStop(0, 'rgba(255, 193, 7, 0.4)');
-    gradient.addColorStop(1, 'rgba(255, 193, 7, 0.0)');
+    if (miGrafica) miGrafica.destroy();
 
     miGrafica = new Chart(ctx, {
         type: 'line',
         data: {
             labels: etiquetas,
             datasets: [{
-                label: 'Precio de Cierre (USDT)',
+                label: 'Precio',
                 data: precios,
                 borderColor: '#ffc107',
-                borderWidth: 3,
-                backgroundColor: gradient,
+                backgroundColor: 'rgba(255, 193, 7, 0.2)',
                 fill: true,
-                tension: 0.3,
-                pointRadius: 2,
-                pointHoverRadius: 6
+                tension: 0.3
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                x: {
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: { color: '#a0a0a5' }
-                },
-                y: {
-                    beginAtZero: false, // CLAVE: Permite ver variaciones pequeñas con zoom automático
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: {
-                        color: '#a0a0a5',
-                        callback: function(value) {
-                            // Ajuste dinámico de precisión según el valor de la moneda
-                            const precision = value < 0.1 ? 8 : 2;
-                            return '$' + value.toLocaleString('en-US', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: precision
-                            });
-                        }
-                    }
-                }
-            }
+            plugins: { legend: { display: false } }
         }
     });
 }
+
+cargarGraficaHistorial();
