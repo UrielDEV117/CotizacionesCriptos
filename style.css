@@ -216,7 +216,7 @@ body {
 
 /*Grafica botones ajustes*/
 
-/* Estilos para los botones de Timeframe */
+/* Estilos forzados para los botones */
 .controles-tiempo {
     display: flex;
     justify-content: center;
@@ -225,25 +225,24 @@ body {
 }
 
 .controles-tiempo button {
-    background-color: #1a1a1a; /* Fondo oscuro */
-    color: #ffc107;            /* Color dorado */
-    border: 1px solid #ffc107; /* Borde dorado */
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-.controles-tiempo button {
     background-color: #1a1a1a !important;
     color: #ffc107 !important;
     border: 1px solid #ffc107 !important;
+    padding: 8px 16px !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+    font-family: sans-serif !important;
+    transition: 0.3s !important;
 }
 
-/* Opcional: Centrar el reloj de cuenta atrás */
+.controles-tiempo button:hover {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
 #timer {
-    font-size: 1rem;
-    margin-bottom: 20px;
-    opacity: 0.8;
+    text-align: center;
+    color: #ffc107 !important;
+    font-family: monospace !important;
+    margin-bottom: 10px !important;
 }

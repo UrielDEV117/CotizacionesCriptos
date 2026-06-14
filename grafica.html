@@ -9,18 +9,16 @@
 
     <h1 id="grafica-titulo" class="titulo">Cargando Gráfica...</h1>
     
-    <div class="controles-tiempo" style="text-align: center; margin: 15px 0;">
+    <div class="controles-tiempo">
         <button onclick="cambiarTimeframe('15m')">15m</button>
         <button onclick="cambiarTimeframe('1h')">1h</button>
         <button onclick="cambiarTimeframe('4h')">4h</button>
         <button onclick="cambiarTimeframe('1d')">1d</button>
     </div>
 
-    <div id="timer" style="text-align: center; color: #ffc107; font-family: 'Space Grotesk', sans-serif; margin-bottom: 10px;">
-        Cargando tiempo...
-    </div>
+    <div id="timer">Cargando tiempo...</div>
 
-    <a href="index.html" class="cambio positivo" style="text-decoration: none;">← Volver al Panel</a>
+    <a href="index.html" class="cambio positivo" style="text-decoration: none; display: block; text-align: center; margin-top: 10px;">← Volver al Panel</a>
 
     <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
         <canvas id="myChart"></canvas>
