@@ -1,4 +1,4 @@
-/* --- TUS ESTILOS GLOBALES E INDEX --- */
+/* --- ESTILOS GLOBALES E INDEX (LIBRES DE CONFLICTOS) --- */
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Space+Grotesk:wght@300..700&display=swap');
 
 body {
@@ -9,11 +9,21 @@ body {
     min-height: 100vh;
 }
 
-.titulo { font-size: 2.8rem; margin-top: 40px; color: #f0b90b; text-align: center; }
+/* Aseguramos que el grid del index siempre funcione */
+.crypto-grid {
+    display: grid !important; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 20px;
+    width: 95%; 
+    max-width: 1200px;
+    padding: 20px;
+}
 
-/* ... (Aquí irían todos tus estilos de .crypto-grid, .card, etc.) ... */
+/* --- ESTILOS DE LA GRÁFICA (ENCAPSULADOS) --- */
+/* Estas reglas solo se activan si el body tiene la clase 'pagina-grafica' */
 
-/* --- ESTILOS EXCLUSIVOS PARA LA GRÁFICA (ENCAPSULADOS) --- */
+body.pagina-grafica .titulo { font-size: 2.8rem; margin-top: 40px; color: #f0b90b; text-align: center; }
+
 body.pagina-grafica .controles-tiempo { 
     display: flex; justify-content: center; gap: 10px; margin: 20px 0; 
 }
@@ -22,27 +32,14 @@ body.pagina-grafica .controles-tiempo button {
     background-color: #1a1a1a !important; color: #ffc107 !important;
     border: 1px solid #ffc107 !important; padding: 8px 16px !important;
     border-radius: 5px !important; cursor: pointer !important;
-    transition: 0.3s !important;
 }
-
-body.pagina-grafica .controles-tiempo button:hover { background-color: #ffc107 !important; color: #000 !important; }
 
 body.pagina-grafica .contenedor-grafica {
     position: relative; width: 95%; max-width: 900px; height: 400px; margin: 20px auto;
 }
 
-body.pagina-grafica #timer { 
-    text-align: center; color: #ffc107 !important; font-family: monospace !important; margin-bottom: 10px !important; 
-}
+body.pagina-grafica #timer { text-align: center; color: #ffc107 !important; font-family: monospace !important; }
 
 @media (max-width: 600px) {
     body.pagina-grafica .contenedor-grafica { height: 250px; }
-    body.pagina-grafica .controles-tiempo { flex-wrap: wrap; gap: 5px; }
-}
-
-/* Responsive solo para gráfica */
-@media (max-width: 600px) {
-    body.pagina-grafica .titulo { font-size: 1.8rem; }
-    body.pagina-grafica .contenedor-grafica { height: 250px; }
-    body.pagina-grafica .controles-tiempo { flex-wrap: wrap; gap: 5px; }
 }
