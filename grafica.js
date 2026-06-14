@@ -7,10 +7,11 @@ let timeframeActual = '4h';
 let intervaloCuentaAtras;
 
 async function cargarGraficaHistorial() {
-    // 1. Limpiar cualquier proceso anterior
+    // 1. Limpiamos cualquier intervalo activo al cambiar de timeframe
     if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
     
-    // 2. Mapeo exacto según los valores permitidos por la API (error 400171)
+    // 2. Mapeo exacto según la validación de la API de Bitget v2
+    // La API requiere estrictamente: '15min', '1h', '4h', '1day'
     const mapGranularity = { 
         '15m': '15min', 
         '1h': '1h', 
@@ -20,7 +21,7 @@ async function cargarGraficaHistorial() {
     
     const granularityValue = mapGranularity[timeframeActual];
 
-    // 3. Petición a la API
+    // 3. Petición a la API con los parámetros correctos
     const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${granularityValue}&limit=30`;
     
     try {
@@ -53,7 +54,7 @@ function cambiarTimeframe(nuevoTF) {
     cargarGraficaHistorial(); 
 }
 
-// Lógica de cuenta atrás
+// Lógica de cuenta atrás (ajustada a los mismos valores que la API)
 function iniciarCuentaAtras(granularity) {
     const mapMs = { '15m': 900000, '1h': 3600000, '4h': 14400000, '1d': 86400000 };
     const ms = mapMs[granularity] || 14400000;
@@ -88,8 +89,8 @@ function renderizarChart(etiquetas, precios) {
             }] 
         },
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false, 
+            responsive: true,            // Ajuste automático al contenedor
+            maintainAspectRatio: false,  // Necesario para el diseño responsive en CSS
             plugins: { legend: { display: false } } 
         }
     });

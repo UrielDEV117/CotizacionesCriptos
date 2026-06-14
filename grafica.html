@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial de Precios</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,11 +19,11 @@
 
     <div id="timer">Cargando tiempo...</div>
 
-    <a href="index.html" class="cambio positivo" style="text-decoration: none; display: block; text-align: center; margin-top: 10px;">← Volver al Panel</a>
-
-    <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
+    <div class="contenedor-grafica">
         <canvas id="myChart"></canvas>
     </div>
+
+    <a href="index.html" class="cambio positivo" style="text-decoration: none; display: block; text-align: center; margin-top: 20px;">← Volver al Panel</a>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="grafica.js"></script>
