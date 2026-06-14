@@ -53,39 +53,32 @@ async function consultarAPI() {
         console.error("Hubo un fallo al sincronizar con Bitget:", error);
     }
 }
-
-function renderizarTarjetas(listaTickers) {
+function renderizarTarjetas(lista) {
     const contenedor = document.getElementById('crypto-container');
     if (!contenedor) return;
-    
-    // Limpiamos antes de inyectar
-    contenedor.innerHTML = ''; 
+    contenedor.innerHTML = '';
 
-    listaTickers.forEach((ticker, index) => {
+    lista.forEach((ticker, index) => {
         const simbolo = ticker.symbol.replace('USDT', '');
-        const precio = parseFloat(ticker.lastPr).toFixed(2);
-        const cambio = parseFloat(ticker.chg24h).toFixed(2);
-        const esPositivo = cambio >= 0;
-        const claseCambio = esPositivo ? 'positivo' : 'negativo';
-        const signo = esPositivo ? '+' : '';
-
-        // Creamos el elemento de la tarjeta
-        const tarjeta = document.createElement('div');
-        tarjeta.className = 'card'; // Esta clase debe estar en tu CSS
+        const precio = parseFloat(ticker.lastPr || 0).toFixed(2);
         
-        // Inyectamos el HTML con las clases de diseño
+        // CORRECCIÓN: Buscamos chg24h, si no existe usamos chg, si tampoco, ponemos 0
+        const cambioRaw = ticker.chg24h || ticker.chg || 0;
+        const cambio = parseFloat(cambioRaw).toFixed(2);
+        
+        const esPositivo = cambio >= 0;
+
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'card';
         tarjeta.innerHTML = `
-            <div class="card-header">
-                <span class="ranking">#${index + 1}</span>
-                <h3>${simbolo} (USDT)</h3>
-            </div>
+            <span class="ranking">#${index + 1}</span>
+            <h3>${simbolo} (USDT)</h3>
             <p class="precio">$${precio}</p>
-            <p class="cambio ${claseCambio}">${signo}${cambio}%</p>
+            <p class="${esPositivo ? 'positivo' : 'negativo'}">${esPositivo ? '+' : ''}${cambio}%</p>
             <button class="btn-grafica" onclick="window.location.href='grafica.html?id=${simbolo.toLowerCase()}'">
                 Ver Gráfica
             </button>
         `;
-        
         contenedor.appendChild(tarjeta);
     });
 }
