@@ -93,4 +93,3 @@ function renderizarTarjetas(listaTickers) {
 // Asegúrate de seguir llamando a consultarAPI() cada cierto tiempo
 setInterval(consultarAPI, 5000);
 consultarAPI();
-});
