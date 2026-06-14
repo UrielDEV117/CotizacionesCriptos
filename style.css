@@ -31,7 +31,14 @@ body.pagina-grafica .contenedor-grafica {
     position: relative; width: 95%; max-width: 900px; height: 400px; margin: 20px auto;
 }
 
-body.pagina-grafica #timer { text-align: center; color: #ffc107 !important; font-family: monospace !important; margin-bottom: 10px !important; }
+body.pagina-grafica #timer { 
+    text-align: center; color: #ffc107 !important; font-family: monospace !important; margin-bottom: 10px !important; 
+}
+
+@media (max-width: 600px) {
+    body.pagina-grafica .contenedor-grafica { height: 250px; }
+    body.pagina-grafica .controles-tiempo { flex-wrap: wrap; gap: 5px; }
+}
 
 /* Responsive solo para gráfica */
 @media (max-width: 600px) {

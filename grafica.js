@@ -7,19 +7,30 @@ let intervaloCuentaAtras;
 
 async function cargarGraficaHistorial() {
     if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
-    const mapGranularity = { '15m': '15min', '1h': '1h', '4h': '4h', '1d': '1day' };
+    
+    // MAPA CORREGIDO: Bitget v2 exige estos strings específicos
+    const mapGranularity = { 
+        '15m': '15min', 
+        '1h': '1h', 
+        '4h': '4h', 
+        '1d': '1day' 
+    };
+    
     const granularityValue = mapGranularity[timeframeActual];
     const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${granularityValue}&limit=30`;
     
     try {
         const respuesta = await fetch(API_HISTORIAL);
         const json = await respuesta.json();
+        
         if (json.code === "00000" && json.data) {
             const velas = [...json.data].reverse();
             const etiquetas = velas.map(v => new Date(parseInt(v[0])).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
             const precios = velas.map(v => parseFloat(v[4]));
             renderizarChart(etiquetas, precios);
             iniciarCuentaAtras(timeframeActual);
+        } else {
+            console.error("Error en API:", json);
         }
     } catch (error) { console.error("Error:", error); }
 }
@@ -32,6 +43,7 @@ function cambiarTimeframe(nuevoTF) {
 function iniciarCuentaAtras(granularity) {
     const mapMs = { '15m': 900000, '1h': 3600000, '4h': 14400000, '1d': 86400000 };
     const ms = mapMs[granularity] || 14400000;
+    
     intervaloCuentaAtras = setInterval(() => {
         const resto = ms - (Date.now() % ms);
         const m = Math.floor((resto / 60000) % 60);
@@ -44,6 +56,7 @@ function iniciarCuentaAtras(granularity) {
 function renderizarChart(etiquetas, precios) {
     const ctx = document.getElementById('myChart').getContext('2d');
     if (miGrafica) miGrafica.destroy();
+    
     miGrafica = new Chart(ctx, {
         type: 'line',
         data: { labels: etiquetas, datasets: [{ data: precios, borderColor: '#ffc107', backgroundColor: 'rgba(255, 193, 7, 0.1)', fill: true, tension: 0.3 }] },
