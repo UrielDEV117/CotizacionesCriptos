@@ -6,11 +6,17 @@ let miGrafica;
 let timeframeActual = '4h';
 let intervaloCuentaAtras;
 
+// Cambia tu función cargarGraficaHistorial para usar el formato que espera Bitget v2
 async function cargarGraficaHistorial() {
-    // 1. Limpiar el temporizador antes de cargar nuevos datos
     if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
     
-    const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${timeframeActual}&limit=30`;
+    // IMPORTANTE: Asegúrate de que el formato de granularity sea el correcto.
+    // Si Bitget v2 usa segundos, '15m' podría ser '900', '1h' '3600', '1d' '86400'.
+    // Probemos mapear a los códigos que Bitget v2 acepta para velas:
+    const mapGranularity = { '15m': '900', '1h': '3600', '4h': '14400', '1d': '86400' };
+    const granularityValue = mapGranularity[timeframeActual];
+
+    const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${granularityValue}&limit=30`;
     
     try {
         const respuesta = await fetch(API_HISTORIAL);
@@ -22,12 +28,12 @@ async function cargarGraficaHistorial() {
             const precios = velas.map(v => parseFloat(v[4]));
 
             renderizarChart(etiquetas, precios);
-            
-            // 2. Iniciar el nuevo temporizador con el timeframe seleccionado
             iniciarCuentaAtras(timeframeActual);
+        } else {
+            console.error("Error en respuesta de API:", json);
         }
     } catch (error) {
-        console.error("Error al cargar gráfica:", error);
+        console.error("Error al cargar:", error);
     }
 }
 
