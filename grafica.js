@@ -1,43 +1,58 @@
-// --- CONFIGURACIÓN ---
 const urlParams = new URLSearchParams(window.location.search);
 const tickerId = urlParams.get('id') || 'btc';
-const titulo = document.getElementById('grafica-titulo');
 let myChart;
 
 // Título dinámico
-titulo.innerText = `${tickerId.toUpperCase()} / USDT`;
+const titulo = document.getElementById('grafica-titulo');
+if (titulo) titulo.innerText = `${tickerId.toUpperCase()} / USDT`;
 
-// --- LÓGICA PRINCIPAL ---
-async function cargarDatos(ticker, period) {
+async function cargarDatos(ticker, period = '1h') {
     const timer = document.getElementById('timer');
-    timer.innerText = `Cargando datos de ${ticker.toUpperCase()} (${period})...`;
+    const infoZona = document.getElementById('zona-horaria-info');
     
-    // AQUÍ: Sustituye la URL por la llamada real a tu API de Bitget
-    console.log(`Fetching: ${ticker}, Periodo: ${period}`);
-
-    // Simulación de respuesta de API (Diferentes datos según ticker)
-    const base = ticker === 'eth' ? 3000 : 60000;
-    const datosSimulados = Array.from({length: 5}, () => Math.floor(base + (Math.random() * 500)));
-
-    // Actualizar gráfica
-    myChart.data.datasets[0].data = datosSimulados;
-    myChart.update();
+    if (timer) timer.innerText = `Cargando datos de ${ticker.toUpperCase()}...`;
     
-    timer.innerText = `Datos actualizados para ${ticker.toUpperCase()}`;
+    // Solo intentar acceder a infoZona si existe
+    if (infoZona) {
+        infoZona.innerText = `Tu hora local: ${Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_', ' ')}`;
+    }
+    
+    try {
+        const response = await fetch('https://api.bitget.com/api/v2/spot/market/tickers');
+        const data = await response.json();
+        const tickerData = data.data.find(t => t.symbol === `${ticker.toUpperCase()}USDT`);
+        const precio = tickerData ? parseFloat(tickerData.lastPr) : 100;
+
+        const vol = precio * 0.005;
+        if (myChart) {
+            myChart.data.datasets[0].data = Array.from({length: 5}, () => precio + (Math.random() * vol * 2 - vol));
+            myChart.update();
+        }
+        
+        if (timer) timer.innerText = `Precio actual: $${precio.toLocaleString()}`;
+    } catch (e) {
+        if (timer) timer.innerText = "Error al cargar datos";
+    }
 }
 
-// Evento de los botones
-async function cambiarTimeframe(tf) {
+// Hacemos la función global para que el HTML la encuentre
+window.cambiarTimeframe = async function(tf) {
+    console.log("Cambiando timeframe a:", tf);
     await cargarDatos(tickerId, tf);
-}
+};
 
-// Inicialización
 function init() {
-    const ctx = document.getElementById('myChart').getContext('2d');
-    myChart = new Chart(ctx, {
+    const ctx = document.getElementById('myChart');
+    if (!ctx) return;
+    
+    myChart = new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
-            labels: ['09:00', '08:00', '07:00', '06:00', '05:00'],
+            labels: Array.from({length: 5}, (_, i) => {
+                const d = new Date();
+                d.setHours(d.getHours() - (4 - i));
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }),
             datasets: [{
                 label: 'Precio',
                 data: [0, 0, 0, 0, 0],
@@ -57,9 +72,8 @@ function init() {
             }
         }
     });
-
-    // Carga inicial
-    cargarDatos(tickerId, '1h');
+    cargarDatos(tickerId);
 }
 
+// Inicializar
 init();

@@ -11,18 +11,9 @@ body {
 }
 
 /* --- CABECERA E INFORMACIÓN --- */
-.contenedor-info {
-    text-align: center;
-    margin: 40px auto 20px auto;
-}
-
-.titulo { 
-    color: #f0b90b; font-size: 2.5rem; margin-bottom: 10px;
-}
-
-.subtitulo {
-    color: #888; font-size: 1.1rem;
-}
+.contenedor-info { text-align: center; margin: 40px auto 20px auto; }
+.titulo { color: #f0b90b; font-size: 2.5rem; margin-bottom: 10px; }
+.subtitulo { color: #888; font-size: 1.1rem; }
 
 /* --- GRID DE CRIPTOMONEDAS --- */
 .crypto-grid {
@@ -44,9 +35,12 @@ body {
     color: white;
 }
 
+.card h3 { margin: 10px 0; }
+.card h3 small { font-size: 0.7rem; color: #888; }
 .precio { font-size: 1.6rem; font-weight: bold; margin: 10px 0; }
 .positivo { color: #0ecb81; font-weight: bold; }
 .negativo { color: #f6465d; font-weight: bold; }
+.volumen { color: #666; font-size: 0.85rem; margin: 5px 0 15px 0; }
 
 .btn-grafica {
     background: #f0b90b; border: none; padding: 12px;
@@ -55,9 +49,7 @@ body {
 }
 
 /* --- PÁGINA DE GRÁFICA --- */
-body.pagina-grafica {
-    display: flex; flex-direction: column; align-items: center;
-}
+body.pagina-grafica { display: flex; flex-direction: column; align-items: center; }
 
 .header-grafica {
     width: 100%;
@@ -74,7 +66,7 @@ body.pagina-grafica {
     font-weight: bold; cursor: pointer; z-index: 10;
 }
 
-.header-grafica .titulo {
+.header-grafica .titulo-grafica {
     margin: 0 auto;
     padding: 0 60px;
     font-size: 1.5rem;
@@ -82,10 +74,7 @@ body.pagina-grafica {
 }
 
 /* --- CONTROLES Y GRÁFICA --- */
-.controles-tiempo { 
-    display: flex; justify-content: center; gap: 10px; margin: 20px 0; 
-}
-
+.controles-tiempo { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
 .controles-tiempo button {
     background-color: #1a1a1a !important; color: #ffc107 !important;
     border: 1px solid #ffc107 !important; padding: 10px 20px !important;
@@ -93,11 +82,18 @@ body.pagina-grafica {
 }
 
 .contenedor-grafica {
-    position: relative; width: 95%; max-width: 900px; height: 400px; margin: 20px auto;
+    position: relative; width: 95%; max-width: 900px; height: 350px; margin: 20px auto;
 }
 
-#timer { 
-    text-align: center; color: #ffc107 !important; font-family: monospace !important; 
+#timer { text-align: center; color: #ffc107 !important; font-family: monospace !important; margin-top: 10px; }
+
+/* Nueva etiqueta para zona horaria */
+#zona-horaria-info {
+    text-align: center;
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    font-style: italic;
 }
 
 /* --- RESPONSIVE --- */
