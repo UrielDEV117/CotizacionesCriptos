@@ -3,41 +3,56 @@ const tickerId = urlParams.get('id') || 'btc';
 let myChart;
 
 // Título dinámico
-const titulo = document.getElementById('grafica-titulo');
+const titulo = document.getElementById('titulo-grafica'); // Asegúrate que en HTML el ID sea este
 if (titulo) titulo.innerText = `${tickerId.toUpperCase()} / USDT`;
+
+// Mapeo de botones a los valores de la API de Bitget
+const timeframes = {
+    '15m': '15m',
+    '1h': '1h',
+    '4h': '4h',
+    '1d': '1D'
+};
 
 async function cargarDatos(ticker, period = '1h') {
     const timer = document.getElementById('timer');
     const infoZona = document.getElementById('zona-horaria-info');
+    const periodValue = timeframes[period] || '1h';
     
-    if (timer) timer.innerText = `Cargando datos de ${ticker.toUpperCase()}...`;
-    
-    // Solo intentar acceder a infoZona si existe
+    if (timer) timer.innerText = `Cargando velas de ${periodValue}...`;
     if (infoZona) {
         infoZona.innerText = `Tu hora local: ${Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_', ' ')}`;
     }
     
     try {
-        const response = await fetch('https://api.bitget.com/api/v2/spot/market/tickers');
-        const data = await response.json();
-        const tickerData = data.data.find(t => t.symbol === `${ticker.toUpperCase()}USDT`);
-        const precio = tickerData ? parseFloat(tickerData.lastPr) : 100;
-
-        const vol = precio * 0.005;
-        if (myChart) {
-            myChart.data.datasets[0].data = Array.from({length: 5}, () => precio + (Math.random() * vol * 2 - vol));
-            myChart.update();
-        }
+        // Llamada a la API de velas reales de Bitget
+        const url = `https://api.bitget.com/api/v2/spot/market/history-candles?symbol=${ticker.toUpperCase()}USDT&granularity=${periodValue}`;
+        const response = await fetch(url);
+        const json = await response.json();
         
-        if (timer) timer.innerText = `Precio actual: $${precio.toLocaleString()}`;
+        if (json.data && json.data.length > 0) {
+            // Bitget retorna: [timestamp, open, high, low, close, vol, quoteVol]
+            // Tomamos las últimas 10 velas y las invertimos para que la más reciente esté a la derecha
+            const velas = json.data.slice(0, 10).reverse(); 
+            const precios = velas.map(v => parseFloat(v[4])); 
+            const labels = velas.map(v => new Date(parseInt(v[0])).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+
+            if (myChart) {
+                myChart.data.labels = labels;
+                myChart.data.datasets[0].data = precios;
+                myChart.update();
+            }
+            
+            if (timer) timer.innerText = `Precio actual: $${precios[precios.length - 1].toLocaleString()}`;
+        }
     } catch (e) {
-        if (timer) timer.innerText = "Error al cargar datos";
+        console.error("Error al cargar velas:", e);
+        if (timer) timer.innerText = "Error al conectar con Bitget";
     }
 }
 
-// Hacemos la función global para que el HTML la encuentre
+// Función global para los botones
 window.cambiarTimeframe = async function(tf) {
-    console.log("Cambiando timeframe a:", tf);
     await cargarDatos(tickerId, tf);
 };
 
@@ -48,14 +63,10 @@ function init() {
     myChart = new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
-            labels: Array.from({length: 5}, (_, i) => {
-                const d = new Date();
-                d.setHours(d.getHours() - (4 - i));
-                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }),
+            labels: [],
             datasets: [{
                 label: 'Precio',
-                data: [0, 0, 0, 0, 0],
+                data: [],
                 borderColor: '#f0b90b',
                 backgroundColor: 'rgba(240, 185, 11, 0.1)',
                 fill: true,
@@ -72,8 +83,7 @@ function init() {
             }
         }
     });
-    cargarDatos(tickerId);
+    cargarDatos(tickerId, '1h');
 }
 
-// Inicializar
 init();
