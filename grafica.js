@@ -3,37 +3,39 @@ const tickerId = urlParams.get('id') || 'btc';
 let myChart;
 
 // Título dinámico
-const titulo = document.getElementById('titulo-grafica'); // Asegúrate que en HTML el ID sea este
+const titulo = document.getElementById('titulo-grafica');
 if (titulo) titulo.innerText = `${tickerId.toUpperCase()} / USDT`;
 
-// Mapeo de botones a los valores de la API de Bitget
+// Mapeo exacto según el requerimiento de la API V2 de Bitget
 const timeframes = {
-    '15m': '15m',
-    '1h': '1h',
-    '4h': '4h',
-    '1d': '1D'
+    '15m': '15min',
+    '1h': '1H',
+    '4h': '4H',
+    '1d': '1day'
 };
 
 async function cargarDatos(ticker, period = '1h') {
     const timer = document.getElementById('timer');
-    const infoZona = document.getElementById('zona-horaria-info');
-    const periodValue = timeframes[period] || '1h';
+    const periodValue = timeframes[period] || '1H';
+    const symbol = `${ticker.toUpperCase()}USDT`;
     
     if (timer) timer.innerText = `Cargando velas de ${periodValue}...`;
-    if (infoZona) {
-        infoZona.innerText = `Tu hora local: ${Intl.DateTimeFormat().resolvedOptions().timeZone.replace('_', ' ')}`;
-    }
     
     try {
-        // Llamada a la API de velas reales de Bitget
-        const url = `https://api.bitget.com/api/v2/spot/market/history-candles?symbol=${ticker.toUpperCase()}USDT&granularity=${periodValue}`;
+        // Endpoint V2 corregido y validado
+        const url = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${symbol}&granularity=${periodValue}&limit=10`;
+        
         const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.msg || `HTTP ${response.status}`);
+        }
+        
         const json = await response.json();
         
         if (json.data && json.data.length > 0) {
-            // Bitget retorna: [timestamp, open, high, low, close, vol, quoteVol]
-            // Tomamos las últimas 10 velas y las invertimos para que la más reciente esté a la derecha
-            const velas = json.data.slice(0, 10).reverse(); 
+            // Los datos vienen en orden inverso (más reciente al final), revertimos para la gráfica
+            const velas = json.data.reverse(); 
             const precios = velas.map(v => parseFloat(v[4])); 
             const labels = velas.map(v => new Date(parseInt(v[0])).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
@@ -46,7 +48,7 @@ async function cargarDatos(ticker, period = '1h') {
             if (timer) timer.innerText = `Precio actual: $${precios[precios.length - 1].toLocaleString()}`;
         }
     } catch (e) {
-        console.error("Error al cargar velas:", e);
+        console.error("Error en la petición:", e);
         if (timer) timer.innerText = "Error al conectar con Bitget";
     }
 }
