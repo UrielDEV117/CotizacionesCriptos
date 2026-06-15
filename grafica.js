@@ -1,29 +1,33 @@
 const urlParams = new URLSearchParams(window.location.search);
-const tickerId = urlParams.get('id') || 'btc';
+let tickerId = urlParams.get('id') || 'btc';
+
+// Referencia a elementos del HTML
+const titulo = document.getElementById('grafica-titulo'); 
+const infoLocalizacion = document.getElementById('info-localizacion');
+
 let myChart;
+let refreshInterval;
 
-const titulo = document.getElementById('titulo-grafica');
-if (titulo) titulo.innerText = `${tickerId.toUpperCase()} / USDT`;
-
-// Mapeo técnico exacto requerido por la API V2
 const timeframes = {
     '15m': '15min',
-    '1h': '1H',
-    '4h': '4H',
+    '1h': '1h',
+    '4h': '4h',
     '1d': '1day'
 };
 
 async function cargarDatos(ticker, period = '15m') {
     const timer = document.getElementById('timer');
-    // Usamos el mapeo técnico, si falla, cae a '15min' por seguridad
     const periodValue = timeframes[period] || '15min';
     const symbol = `${ticker.toUpperCase()}USDT`;
     
-    if (timer) timer.innerText = `Cargando ${period}...`;
+    // Actualizar título
+    if (titulo) {
+        titulo.innerText = `${ticker.toUpperCase()} / USDT`;
+        titulo.style.color = "#f0b90b";
+    }
     
     try {
         const url = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${symbol}&granularity=${periodValue}&limit=10`;
-        
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
@@ -33,16 +37,12 @@ async function cargarDatos(ticker, period = '15m') {
             const velas = json.data.reverse(); 
             const precios = velas.map(v => parseFloat(v[4])); 
             
-            // CORRECCIÓN AM/PM: Fuerza formato 12h y fuerza nomenclatura en inglés
             const labels = velas.map(v => {
                 const date = new Date(parseInt(v[0]));
-                return period === '1d' 
-                    ? date.toLocaleDateString() 
-                    : date.toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit', 
-                        hour12: true 
-                    });
+                if (period === '1d') {
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
             });
 
             if (myChart) {
@@ -54,13 +54,29 @@ async function cargarDatos(ticker, period = '15m') {
         }
     } catch (e) {
         console.error("Error:", e);
-        if (timer) timer.innerText = "Error al conectar con Bitget";
+        if (titulo) titulo.innerText = "Error al conectar";
+    }
+}
+
+// Función para mostrar zona horaria
+function mostrarInfoLocalizacion() {
+    if (infoLocalizacion) {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        infoLocalizacion.innerText = `Zona horaria detectada: ${timezone}`;
     }
 }
 
 window.cambiarTimeframe = async function(tf) {
+    clearInterval(refreshInterval);
     await cargarDatos(tickerId, tf);
+    iniciarAutoRefresh(tf);
 };
+
+function iniciarAutoRefresh(period) {
+    refreshInterval = setInterval(() => {
+        cargarDatos(tickerId, period);
+    }, 30000);
+}
 
 function init() {
     const ctx = document.getElementById('myChart');
@@ -84,15 +100,23 @@ function init() {
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                y: { ticks: { color: '#ffffff' }, grid: { color: '#333' } },
-                x: { ticks: { color: '#ffffff' }, grid: { display: false } }
+                y: { ticks: { color: '#ffffff' } },
+                x: { 
+                    ticks: { 
+                        color: '#ffffff', 
+                        maxRotation: 0, 
+                        minRotation: 0,
+                        maxTicksLimit: 8
+                    } 
+                }
             }
         }
     });
 
-    // Carga inicial forzada a 15min para evitar el error 400
+    mostrarInfoLocalizacion(); // Ejecuta la detección de zona horaria
     setTimeout(() => {
         cargarDatos(tickerId, '15m');
+        iniciarAutoRefresh('15m');
     }, 1000);
 }
 
