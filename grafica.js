@@ -1,7 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 let tickerId = urlParams.get('id') || 'btc';
 
-// Referencia a elementos del HTML
 const titulo = document.getElementById('grafica-titulo'); 
 const infoLocalizacion = document.getElementById('info-localizacion');
 
@@ -20,14 +19,13 @@ async function cargarDatos(ticker, period = '15m') {
     const periodValue = timeframes[period] || '15min';
     const symbol = `${ticker.toUpperCase()}USDT`;
     
-    // Actualizar título
     if (titulo) {
         titulo.innerText = `${ticker.toUpperCase()} / USDT`;
         titulo.style.color = "#f0b90b";
     }
     
     try {
-        const url = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${symbol}&granularity=${periodValue}&limit=10`;
+        const url = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${symbol}&granularity=${periodValue}&limit=15`;
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
@@ -37,12 +35,13 @@ async function cargarDatos(ticker, period = '15m') {
             const velas = json.data.reverse(); 
             const precios = velas.map(v => parseFloat(v[4])); 
             
+            // Formateo de etiquetas estilo TradingView
             const labels = velas.map(v => {
                 const date = new Date(parseInt(v[0]));
                 if (period === '1d') {
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
                 }
-                return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+                return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
             });
 
             if (myChart) {
@@ -58,11 +57,10 @@ async function cargarDatos(ticker, period = '15m') {
     }
 }
 
-// Función para mostrar zona horaria
 function mostrarInfoLocalizacion() {
     if (infoLocalizacion) {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        infoLocalizacion.innerText = `Zona horaria detectada: ${timezone}`;
+        infoLocalizacion.innerText = `Zona horaria: ${timezone}`;
     }
 }
 
@@ -90,30 +88,38 @@ function init() {
                 label: 'Precio',
                 data: [],
                 borderColor: '#f0b90b',
-                backgroundColor: 'rgba(240, 185, 11, 0.1)',
+                backgroundColor: 'rgba(240, 185, 11, 0.05)',
                 fill: true,
-                tension: 0.4
+                tension: 0.3,
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: { padding: { bottom: 10 } },
             plugins: { legend: { display: false } },
             scales: {
-                y: { ticks: { color: '#ffffff' } },
+                y: { 
+                    ticks: { color: '#b2b5be', font: { size: 11 } },
+                    grid: { color: '#2d2e36' } 
+                },
                 x: { 
                     ticks: { 
-                        color: '#ffffff', 
-                        maxRotation: 0, 
+                        color: '#b2b5be', 
+                        font: { size: 11 },
+                        maxRotation: 0,
                         minRotation: 0,
-                        maxTicksLimit: 8
-                    } 
+                        autoSkip: true,
+                        maxTicksLimit: 6
+                    },
+                    grid: { display: false }
                 }
             }
         }
     });
 
-    mostrarInfoLocalizacion(); // Ejecuta la detección de zona horaria
+    mostrarInfoLocalizacion();
     setTimeout(() => {
         cargarDatos(tickerId, '15m');
         iniciarAutoRefresh('15m');

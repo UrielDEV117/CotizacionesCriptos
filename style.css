@@ -6,7 +6,8 @@
 body {
     margin: 0; padding: 0;
     font-family: "Space Grotesk", sans-serif;
-    background-color: #121214; color: #ffffff;
+    background-color: #131722; /* Ajustado al tono TradingView */
+    color: #ffffff;
     min-height: 100vh;
 }
 
@@ -49,12 +50,12 @@ body {
 }
 
 /* --- PÁGINA DE GRÁFICA --- */
-body.pagina-grafica { display: flex; flex-direction: column; align-items: center; }
+body.pagina-grafica { display: flex; flex-direction: column; align-items: center; background-color: #131722; }
 
 .header-grafica {
     width: 100%;
     display: flex; align-items: center; justify-content: center;
-    padding: 15px; background-color: #121214;
+    padding: 15px; background-color: #131722;
     position: relative; min-height: 80px;
 }
 
@@ -76,21 +77,28 @@ body.pagina-grafica { display: flex; flex-direction: column; align-items: center
 /* --- CONTROLES Y GRÁFICA --- */
 .controles-tiempo { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
 .controles-tiempo button {
-    background-color: #1a1a1a !important; color: #ffc107 !important;
-    border: 1px solid #ffc107 !important; padding: 10px 20px !important;
-    border-radius: 5px !important; cursor: pointer !important;
+    background-color: #131722 !important; 
+    color: #f0b90b !important;
+    border: 1px solid #f0b90b !important; 
+    padding: 10px 20px !important;
+    border-radius: 5px !important; 
+    cursor: pointer !important;
 }
 
 .contenedor-grafica {
-    position: relative; width: 95%; max-width: 900px; height: 350px; margin: 20px auto;
+    position: relative; 
+    width: 95%; 
+    max-width: 900px; 
+    height: 350px; 
+    margin: 20px auto;
 }
 
-#timer { text-align: center; color: #ffc107 !important; font-family: monospace !important; margin-top: 10px; }
+#timer { text-align: center; color: #f0b90b !important; font-family: monospace !important; margin-top: 10px; }
 
-/* Nueva etiqueta para zona horaria */
-#zona-horaria-info {
+/* Integración de zona horaria (id actualizado a info-localizacion para match con JS) */
+#info-localizacion {
     text-align: center;
-    color: #666;
+    color: #888;
     font-size: 0.8rem;
     margin-top: 5px;
     font-style: italic;
