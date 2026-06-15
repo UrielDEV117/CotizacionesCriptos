@@ -1,66 +1,65 @@
+// --- CONFIGURACIÓN ---
 const urlParams = new URLSearchParams(window.location.search);
-const cryptoId = urlParams.get('id') || 'btc';
-const parBitget = `${cryptoId.toUpperCase()}USDT`;
-let miGrafica;
-let timeframeActual = '4h';
-let intervaloCuentaAtras;
+const tickerId = urlParams.get('id') || 'btc';
+const titulo = document.getElementById('grafica-titulo');
+let myChart;
 
-async function cargarGraficaHistorial() {
-    if (intervaloCuentaAtras) clearInterval(intervaloCuentaAtras);
+// Título dinámico
+titulo.innerText = `${tickerId.toUpperCase()} / USDT`;
+
+// --- LÓGICA PRINCIPAL ---
+async function cargarDatos(ticker, period) {
+    const timer = document.getElementById('timer');
+    timer.innerText = `Cargando datos de ${ticker.toUpperCase()} (${period})...`;
     
-    // MAPA CORREGIDO: Bitget v2 exige estos strings específicos
-    const mapGranularity = { 
-        '15m': '15min', 
-        '1h': '1h', 
-        '4h': '4h', 
-        '1d': '1day' 
-    };
+    // AQUÍ: Sustituye la URL por la llamada real a tu API de Bitget
+    console.log(`Fetching: ${ticker}, Periodo: ${period}`);
+
+    // Simulación de respuesta de API (Diferentes datos según ticker)
+    const base = ticker === 'eth' ? 3000 : 60000;
+    const datosSimulados = Array.from({length: 5}, () => Math.floor(base + (Math.random() * 500)));
+
+    // Actualizar gráfica
+    myChart.data.datasets[0].data = datosSimulados;
+    myChart.update();
     
-    const granularityValue = mapGranularity[timeframeActual];
-    const API_HISTORIAL = `https://api.bitget.com/api/v2/spot/market/candles?symbol=${parBitget}&granularity=${granularityValue}&limit=30`;
-    
-    try {
-        const respuesta = await fetch(API_HISTORIAL);
-        const json = await respuesta.json();
-        
-        if (json.code === "00000" && json.data) {
-            const velas = [...json.data].reverse();
-            const etiquetas = velas.map(v => new Date(parseInt(v[0])).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-            const precios = velas.map(v => parseFloat(v[4]));
-            renderizarChart(etiquetas, precios);
-            iniciarCuentaAtras(timeframeActual);
-        } else {
-            console.error("Error en API:", json);
-        }
-    } catch (error) { console.error("Error:", error); }
+    timer.innerText = `Datos actualizados para ${ticker.toUpperCase()}`;
 }
 
-function cambiarTimeframe(nuevoTF) {
-    timeframeActual = nuevoTF;
-    cargarGraficaHistorial(); 
+// Evento de los botones
+async function cambiarTimeframe(tf) {
+    await cargarDatos(tickerId, tf);
 }
 
-function iniciarCuentaAtras(granularity) {
-    const mapMs = { '15m': 900000, '1h': 3600000, '4h': 14400000, '1d': 86400000 };
-    const ms = mapMs[granularity] || 14400000;
-    
-    intervaloCuentaAtras = setInterval(() => {
-        const resto = ms - (Date.now() % ms);
-        const m = Math.floor((resto / 60000) % 60);
-        const s = Math.floor((resto / 1000) % 60);
-        const timer = document.getElementById('timer');
-        if (timer) timer.innerText = `Próxima vela en: ${m}m ${s}s`;
-    }, 1000);
-}
-
-function renderizarChart(etiquetas, precios) {
+// Inicialización
+function init() {
     const ctx = document.getElementById('myChart').getContext('2d');
-    if (miGrafica) miGrafica.destroy();
-    
-    miGrafica = new Chart(ctx, {
+    myChart = new Chart(ctx, {
         type: 'line',
-        data: { labels: etiquetas, datasets: [{ data: precios, borderColor: '#ffc107', backgroundColor: 'rgba(255, 193, 7, 0.1)', fill: true, tension: 0.3 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        data: {
+            labels: ['09:00', '08:00', '07:00', '06:00', '05:00'],
+            datasets: [{
+                label: 'Precio',
+                data: [0, 0, 0, 0, 0],
+                borderColor: '#f0b90b',
+                backgroundColor: 'rgba(240, 185, 11, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { ticks: { color: '#ffffff' }, grid: { color: '#333' } },
+                x: { ticks: { color: '#ffffff' }, grid: { display: false } }
+            }
+        }
     });
+
+    // Carga inicial
+    cargarDatos(tickerId, '1h');
 }
-cargarGraficaHistorial();
+
+init();

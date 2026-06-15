@@ -10,7 +10,7 @@ body {
     min-height: 100vh;
 }
 
-/* --- CENTRADO SUPERIOR (Nuevo) --- */
+/* --- CABECERA E INFORMACIÓN --- */
 .contenedor-info {
     text-align: center;
     margin: 40px auto 20px auto;
@@ -24,7 +24,7 @@ body {
     color: #888; font-size: 1.1rem;
 }
 
-/* --- GRID --- */
+/* --- GRID DE CRIPTOMONEDAS --- */
 .crypto-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
@@ -54,7 +54,7 @@ body {
     width: 100%; margin-top: 15px; color: #000;
 }
 
-/* --- ESTILOS DE LA GRÁFICA (Cabecera con botón de regreso) --- */
+/* --- PÁGINA DE GRÁFICA --- */
 body.pagina-grafica {
     display: flex; flex-direction: column; align-items: center;
 }
@@ -62,34 +62,46 @@ body.pagina-grafica {
 .header-grafica {
     width: 100%;
     display: flex; align-items: center; justify-content: center;
-    padding: 20px; position: relative;
-    background-color: #121214;
+    padding: 15px; background-color: #121214;
+    position: relative; min-height: 80px;
 }
 
 .boton-volver {
-    position: absolute; left: 20px;
-    padding: 10px 20px;
+    position: absolute; left: 10px;
+    padding: 8px 15px;
     background-color: #f0b90b; color: #000;
     text-decoration: none; border-radius: 5px;
-    font-weight: bold; cursor: pointer;
+    font-weight: bold; cursor: pointer; z-index: 10;
 }
 
-/* Resto de estilos de gráfica... */
-body.pagina-grafica .controles-tiempo { 
+.header-grafica .titulo {
+    margin: 0 auto;
+    padding: 0 60px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* --- CONTROLES Y GRÁFICA --- */
+.controles-tiempo { 
     display: flex; justify-content: center; gap: 10px; margin: 20px 0; 
 }
 
-body.pagina-grafica .controles-tiempo button {
+.controles-tiempo button {
     background-color: #1a1a1a !important; color: #ffc107 !important;
     border: 1px solid #ffc107 !important; padding: 10px 20px !important;
     border-radius: 5px !important; cursor: pointer !important;
 }
 
-body.pagina-grafica .contenedor-grafica {
+.contenedor-grafica {
     position: relative; width: 95%; max-width: 900px; height: 400px; margin: 20px auto;
 }
 
+#timer { 
+    text-align: center; color: #ffc107 !important; font-family: monospace !important; 
+}
+
+/* --- RESPONSIVE --- */
 @media (max-width: 600px) {
     body.pagina-grafica .contenedor-grafica { height: 250px; }
-    .boton-volver { padding: 8px 12px; font-size: 0.9rem; }
+    .boton-volver { font-size: 0.8rem; }
 }
