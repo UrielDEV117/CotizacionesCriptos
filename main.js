@@ -1,6 +1,6 @@
 console.log("Conectado a Bitget API v2");
 
-// main.js - Estructura limpia y corregida
+// main.js - Estructura corregida para lectura de volumen
 const API_URL = 'https://api.bitget.com/api/v2/spot/market/tickers';
 
 const TOP_CRIPTOS = [
@@ -40,14 +40,16 @@ function renderizarTarjetas(lista) {
         const precioActual = parseFloat(ticker.lastPr || 0);
         const precioApertura = parseFloat(ticker.open || 0);
         
-        // Cálculo del porcentaje con blindaje para LUMIA y otros
+        // CORRECCIÓN: Usamos 'quoteVolume' que es el campo correcto según tu consola
+        const volumen = parseFloat(ticker.quoteVolume || 0);
+        
+        // Cálculo del porcentaje
         let cambio = 0;
         if (precioApertura > 0) {
             cambio = ((precioActual - precioApertura) / precioApertura) * 100;
         }
         if (!isFinite(cambio) || isNaN(cambio)) cambio = 0;
 
-        // Formato: 8 decimales para monedas muy baratas, 2 para las normales
         const precio = precioActual < 1 ? precioActual.toFixed(8) : precioActual.toFixed(2);
         const esPositivo = cambio >= 0;
 
@@ -58,6 +60,9 @@ function renderizarTarjetas(lista) {
             <h3>${ticker.base} (USDT)</h3>
             <p class="precio">$${precio}</p>
             <p class="${esPositivo ? 'positivo' : 'negativo'}">${esPositivo ? '+' : ''}${cambio.toFixed(2)}%</p>
+            <p style="font-size: 0.75rem; color: #888; margin-top: 5px;">
+                Vol 24h: ${volumen > 0 ? volumen.toLocaleString(undefined, {maximumFractionDigits: 0}) : '0'}
+            </p>
             <button class="btn-grafica" onclick="window.location.href='grafica.html?id=${ticker.base.toLowerCase()}'">
                 Ver Gráfica
             </button>
@@ -65,7 +70,6 @@ function renderizarTarjetas(lista) {
         contenedor.appendChild(card);
     });
 }
-
 // Iniciar
 consultarAPI();
 setInterval(consultarAPI, 10000);
