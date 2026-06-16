@@ -1,4 +1,4 @@
-console.log("Conectado a Bitget API v2 - Sistema de iconos restaurado");
+console.log("Sistema cargado: URLs de logos ajustadas a origen");
 
 const API_URL = 'https://api.bitget.com/api/v2/spot/market/tickers';
 const TOP_CRIPTOS = [
@@ -10,7 +10,6 @@ const TOP_CRIPTOS = [
     'SUI', 'SEI', 'TIA', 'STRK', 'ARB', 'OP', 'POL', 'KAS', 'LUMIA'
 ];
 
-// Mapa consolidado para evitar bloqueos y asegurar que todos los logos carguen
 const ICONOS_MAPA = {
     "BTC": "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
     "ETH": "https://cryptologos.cc/logos/ethereum-eth-logo.png",
@@ -30,19 +29,19 @@ const ICONOS_MAPA = {
     "SUSHI": "https://cryptologos.cc/logos/sushiswap-sushi-logo.png",
     "DYDX": "https://cryptologos.cc/logos/dydx-dydx-logo.png",
     "LDO": "https://cryptologos.cc/logos/lido-dao-ldo-logo.png",
-    "GMX": "https://assets.coingecko.com/coins/images/18323/large/gmx.png",
+    "GMX": "https://cryptologos.cc/logos/gmx-gmx-logo.png",
     "PENDLE": "https://cryptologos.cc/logos/pendle-pendle-logo.png",
     "ENA": "https://cryptologos.cc/logos/ethena-ena-logo.png",
-    "FET": "https://assets.coingecko.com/coins/images/2016/large/fetch-ai.png",
-    "WLD": "https://assets.coingecko.com/coins/images/29729/large/worldcoin.png",
+    "FET": "https://cryptologos.cc/logos/artificial-superintelligence-alliance-fet-logo.png",
+    "WLD": "https://cryptologos.cc/logos/worldcoin-org-wld-logo.png",
     "RNDR": "https://cryptologos.cc/logos/render-rndr-logo.png",
     "NEAR": "https://cryptologos.cc/logos/near-protocol-near-logo.png",
     "GRT": "https://cryptologos.cc/logos/the-graph-grt-logo.png",
     "OCEAN": "https://cryptologos.cc/logos/ocean-protocol-ocean-logo.png",
     "PEPE": "https://cryptologos.cc/logos/pepe-pepe-logo.png",
-    "WIF": "https://assets.coingecko.com/coins/images/33566/large/dogwifhat.png",
-    "FLOKI": "https://assets.coingecko.com/coins/images/16746/large/floki.png",
-    "BONK": "https://assets.coingecko.com/coins/images/28600/large/bonk.png",
+    "WIF": "https://cryptologos.cc/logos/dogwifhat-wif-logo.png",
+    "FLOKI": "https://cryptologos.cc/logos/floki-inu-floki-logo.png",
+    "BONK": "https://cryptologos.cc/logos/bonk1-bonk-logo.png",
     "SHIB": "https://cryptologos.cc/logos/shiba-inu-shib-logo.png",
     "IMX": "https://cryptologos.cc/logos/immutable-x-imx-logo.png",
     "BEAM": "https://cryptologos.cc/logos/beam-beam-logo.png",
@@ -54,12 +53,12 @@ const ICONOS_MAPA = {
     "SUI": "https://cryptologos.cc/logos/sui-sui-logo.png",
     "SEI": "https://cryptologos.cc/logos/sei-sei-logo.png",
     "TIA": "https://cryptologos.cc/logos/celestia-tia-logo.png",
-    "STRK": "https://assets.coingecko.com/coins/images/26483/large/starknet.png",
+    "STRK": "https://cryptologos.cc/logos/starknet-token-strk-logo.png",
     "ARB": "https://cryptologos.cc/logos/arbitrum-arb-logo.png",
     "OP": "https://cryptologos.cc/logos/optimism-ethereum-op-logo.png",
     "POL": "https://cryptologos.cc/logos/polygon-matic-logo.png",
     "KAS": "https://cryptologos.cc/logos/kaspa-kas-logo.png",
-    "LUMIA": "https://assets.coingecko.com/coins/images/38605/large/lumia.png"
+    "LUMIA": "https://cryptologos.cc/logos/lumia-lumia-logo.png"
 };
 
 async function consultarAPI() {
@@ -88,13 +87,15 @@ function renderizarTarjetas(lista) {
         const volumen = parseFloat(ticker.quoteVolume || 0);
         let cambio = precioApertura > 0 ? ((precioActual - precioApertura) / precioApertura) * 100 : 0;
         
-        const iconoSrc = ICONOS_MAPA[ticker.base] || `https://ui-avatars.com/api/?name=${ticker.base}&background=f0b90b&color=000&size=128`;
+        const iconoSrc = ICONOS_MAPA[ticker.base] || `https://ui-avatars.com/api/?name=${ticker.base}&background=f0b90b&color=000&size=128&bold=true`;
 
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
             <span class="ranking">#${index + 1}</span>
-            <img src="${iconoSrc}" alt="${ticker.base}" style="width: 50px; height: 50px; margin: 10px auto; display: block; border-radius: 50%;">
+            <img src="${iconoSrc}" alt="${ticker.base}" 
+                 onerror="this.src='https://ui-avatars.com/api/?name=${ticker.base}&background=f0b90b&color=000&size=128&bold=true'"
+                 style="width: 50px; height: 50px; margin: 10px auto; display: block; border-radius: 50%; background: #222;">
             <h3>${ticker.base} (USDT)</h3>
             <p class="precio">$${precioActual < 1 ? precioActual.toFixed(8) : precioActual.toFixed(2)}</p>
             <p class="${cambio >= 0 ? 'positivo' : 'negativo'}">${cambio.toFixed(2)}%</p>
