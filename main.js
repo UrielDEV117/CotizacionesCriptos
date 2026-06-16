@@ -10,8 +10,23 @@ const TOP_CRIPTOS = [
     'SUI', 'SEI', 'TIA', 'STRK', 'ARB', 'OP', 'POL', 'KAS', 'LUMIA'
 ];
 
+function mostrarCargando() {
+    const contenedor = document.getElementById('crypto-container');
+    contenedor.innerHTML = ''; 
+    for (let i = 0; i < 9; i++) {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton';
+        contenedor.appendChild(skeleton);
+    }
+}
+
 async function consultarAPI() {
     const statusEl = document.getElementById('status-message');
+    const contenedor = document.getElementById('crypto-container');
+    
+    // Si el contenedor está vacío, mostramos el efecto de carga
+    if (contenedor.innerHTML === '') mostrarCargando();
+
     try {
         const respuesta = await fetch(API_URL);
         if (!respuesta.ok) throw new Error("Servidor no responde");
@@ -52,6 +67,7 @@ function renderizarTarjetas(lista) {
         const card = document.createElement('div');
         card.className = 'card';
         
+        // Estructura segura: innerHTML solo para estructura, textContent para datos dinámicos
         card.innerHTML = `
             <span class="ranking">#${index + 1}</span>
             <h3>${ticker.base} (USDT)</h3>
