@@ -1,4 +1,4 @@
-/* --- 1. CONFIGURACIÓN BASE Y TIPOGRAFÍA --- */
+/* ---  CONFIGURACIÓN BASE Y TIPOGRAFÍA --- */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -10,7 +10,7 @@ body {
     min-height: 100vh;
 }
 
-/* --- 2. ESTILOS PARA INDEX.HTML (Grid y Cards) --- */
+/* ---  ESTILOS PARA INDEX.HTML (Grid y Cards) --- */
 .contenedor-info { text-align: center; margin: 40px auto 20px auto; }
 .titulo { color: #f0b90b; font-size: 2.5rem; margin-bottom: 10px; }
 
@@ -38,7 +38,7 @@ body {
     width: 100%; margin-top: 15px; color: #000; text-decoration: none; display: block;
 }
 
-/* --- 3. ESTILOS PARA PAGINA DE GRÁFICA --- */
+/* ---  ESTILOS PARA PAGINA DE GRÁFICA --- */
 body.pagina-grafica { display: flex; flex-direction: column; align-items: center; }
 
 .header-grafica {
@@ -72,7 +72,7 @@ body.pagina-grafica { display: flex; flex-direction: column; align-items: center
 #timer { color: #666; font-family: monospace; font-size: 0.9rem; margin-bottom: 10px; text-align: center; }
 #cargando-grafica { text-align: center; color: #f0b90b; margin: 20px 0; }
 
-/* --- 4. VARIACIÓN PORCENTUAL (Mejorada) --- */
+/* ---  VARIACIÓN PORCENTUAL (Mejorada) --- */
 #info-precios {
     text-align: center;
     margin: 20px 0;
@@ -89,7 +89,7 @@ body.pagina-grafica { display: flex; flex-direction: column; align-items: center
     text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-/* --- 5. RESPONSIVE --- */
+/* ---  RESPONSIVE --- */
 @media (max-width: 600px) {
     .contenedor-grafica { height: 250px; }
     .boton-volver { font-size: 0.8rem; padding: 6px 12px; }

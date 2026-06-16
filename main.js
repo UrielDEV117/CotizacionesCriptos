@@ -52,7 +52,6 @@ function renderizarTarjetas(lista) {
         const card = document.createElement('div');
         card.className = 'card';
         
-        // Seguridad: Elementos estructurales fijos en HTML, datos dinámicos en textContent
         card.innerHTML = `
             <span class="ranking">#${index + 1}</span>
             <h3>${ticker.base} (USDT)</h3>
