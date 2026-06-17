@@ -1,4 +1,4 @@
-console.log("Sistema cargado: URLs de logos ajustadas a origen");
+console.log("Sistema cargado: Estrategia de carga en cascada activa");
 
 const API_URL = 'https://api.bitget.com/api/v2/spot/market/tickers';
 const TOP_CRIPTOS = [
@@ -61,6 +61,16 @@ const ICONOS_MAPA = {
     "LUMIA": "https://cryptologos.cc/logos/lumia-lumia-logo.png"
 };
 
+// Función de respaldo: si falla el logo, busca en CoinGecko, si falla, pone iniciales
+function getFallbackChain(symbol) {
+    const ids = { "GMX": "18323", "LUMIA": "38668", "FET": "5681", "WLD": "30528", "STRK": "26435" };
+    const id = ids[symbol] || "";
+    if (id) {
+        return `this.onerror=null; this.src='https://assets.coingecko.com/coins/images/${id}/large/${symbol.toLowerCase()}.png'; this.onerror=function(){this.src='https://ui-avatars.com/api/?name=${symbol}&background=f0b90b&color=000&size=128&bold=true'}`;
+    }
+    return "this.onerror=null; this.src='https://ui-avatars.com/api/?name=" + symbol + "&background=f0b90b&color=000&size=128&bold=true'";
+}
+
 async function consultarAPI() {
     try {
         const respuesta = await fetch(API_URL);
@@ -94,7 +104,7 @@ function renderizarTarjetas(lista) {
         card.innerHTML = `
             <span class="ranking">#${index + 1}</span>
             <img src="${iconoSrc}" alt="${ticker.base}" 
-                 onerror="this.src='https://ui-avatars.com/api/?name=${ticker.base}&background=f0b90b&color=000&size=128&bold=true'"
+                 onerror="${getFallbackChain(ticker.base)}"
                  style="width: 50px; height: 50px; margin: 10px auto; display: block; border-radius: 50%; background: #222;">
             <h3>${ticker.base} (USDT)</h3>
             <p class="precio">$${precioActual < 1 ? precioActual.toFixed(8) : precioActual.toFixed(2)}</p>
